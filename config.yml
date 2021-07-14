@@ -1,0 +1,7 @@
+CommandList:
+  #随机指令列表名
+  example1:
+    #请使用 , 分割
+    #格式: 概率,执行指令
+    - '10,player,tellraw @a "我爱你"'
+    - '10,op,tellraw @a "你是个好人"'

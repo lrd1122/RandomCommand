@@ -1,0 +1,9 @@
+name: RandomCommand
+author: lrd1122
+version: 1.0
+main: gx.lrd1122.RandomCommand
+commands:
+  randomcommand:
+    description: randomcommand
+    usage: /<command>
+    aliases: rc
