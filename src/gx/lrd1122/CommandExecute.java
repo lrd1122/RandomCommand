@@ -1,6 +1,7 @@
 package gx.lrd1122;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,14 +19,16 @@ public class CommandExecute implements CommandExecutor {
     private String prefix = RandomCommand.messageconfig.getString("Prefix");
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        Player player = (Player)commandSender;
+        Player player = strings.length == 2 ? Bukkit.getPlayer(strings[1]) : (Player) commandSender;
+        commandSender = player;
         if(strings.length <= 0)
         {
             commandSender.sendMessage(ColorString("&c&l========="+prefix+"&a&l指令帮助"+"&c&l========" +
-                    "\n&e&l/rc <commandname> 触发一个随机指令包 rc.commandname"));
+                    "\n&e&l/rc <commandname> <player> 触发一个随机指令包 rc.use" +
+                    "\n&e&l/rc reload 重载插件 rc.reload"));
             return true;
         }
-        if(strings.length == 1 && player.hasPermission("rc.use"))
+        if(strings.length >= 1 && player.hasPermission("rc.use"))
         {
             try {
                 int fixpercent = 0;
