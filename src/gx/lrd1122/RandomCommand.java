@@ -2,6 +2,7 @@ package gx.lrd1122;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,6 +14,7 @@ public class RandomCommand extends JavaPlugin {
 
     public static JavaPlugin plugin;
     public static YamlConfiguration messageconfig;
+    public static Configuration config;
     @Override
     public void onEnable() {
         getLogger().info("[RandomCommand] 插件已成功加载,Bug反馈+QQ1794325461");
@@ -27,6 +29,7 @@ public class RandomCommand extends JavaPlugin {
             getLogger().info("[RandomCommand] 载入message.yml文件");
         }
         plugin = this;
+        config = getConfig();
         messageconfig = YamlConfiguration.loadConfiguration(messagefile);
         PluginCommand command = Bukkit.getPluginCommand("randomcommand");
         CommandExecute handle = new CommandExecute();

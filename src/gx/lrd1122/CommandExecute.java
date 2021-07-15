@@ -6,11 +6,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
@@ -28,15 +29,17 @@ public class CommandExecute implements CommandExecutor {
                     "\n&e&l/rc reload 重载插件 rc.reload"));
             return true;
         }
-        if(strings.length >= 1 && player.hasPermission("rc.use"))
+        if(strings.length >= 1 && player.hasPermission("rc.use") && !strings[0].equalsIgnoreCase("reload"))
         {
             try {
+                ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+                ScriptEngine scriptEngine = scriptEngineManager.getEngineByName("nashorn");
                 int fixpercent = 0;
                 List<String> commands = getcommands(player, strings[0]);
                 for (int i = 0; i < commands.size(); i++) {
                     String[] splitcommand = commands.get(i).split(",");
                     String percentpapi = PlaceholderAPI.setPlaceholders(player, splitcommand[0]);
-                    float percent = Float.valueOf(percentpapi);
+                    float percent = Float.valueOf(scriptEngine.eval(percentpapi).toString());
                     fixpercent += (int)percent;
                 }
                 Random random = new Random();
@@ -47,8 +50,8 @@ public class CommandExecute implements CommandExecutor {
                         String[] splitcommandb = commands.get(i - 1).split(",");
                         String currentapapi = PlaceholderAPI.setPlaceholders(player, splitcommanda[0]);
                         String currentbpapi = PlaceholderAPI.setPlaceholders(player, splitcommandb[0]);
-                        float currenta = Float.valueOf(currentapapi);
-                        float currentb = Float.valueOf(currentbpapi);
+                        float currenta = Float.valueOf(scriptEngine.eval(currentapapi).toString());
+                        float currentb = Float.valueOf(scriptEngine.eval(currentbpapi).toString());
                         int fixcurrenta = (int)currenta;
                         int fixcurrentb = (int)currentb;
                         int max = fixcurrenta + fixcurrentb;
@@ -79,7 +82,7 @@ public class CommandExecute implements CommandExecutor {
                     if (i <= 0) {
                         String[] splitcommanda = commands.get(i).split(",");
                         String currentpapi = PlaceholderAPI.setPlaceholders(player, splitcommanda[0]);
-                        float current = Float.valueOf(currentpapi);
+                        float current = Float.valueOf(scriptEngine.eval(currentpapi).toString());
                         int fixcurrent = (int) current;
                         if (rangeint(percentnow, 0, fixcurrent)) {
                             if(splitcommanda[1].equalsIgnoreCase("player"))
@@ -116,8 +119,10 @@ public class CommandExecute implements CommandExecutor {
         {
             try{
                 RandomCommand.plugin.reloadConfig();
+                RandomCommand.config = RandomCommand.plugin.getConfig();
                 File messagefile = new File(RandomCommand.plugin.getDataFolder(), "message.yml");
                 RandomCommand.messageconfig = YamlConfiguration.loadConfiguration(messagefile);
+                commandSender.sendMessage(ColorString(prefix+ "&a已重载插件"));
             }
             catch (Exception e) {
                 player.sendMessage(ColorString(prefix +  RandomCommand.messageconfig.get("ReloadError")));
@@ -128,7 +133,7 @@ public class CommandExecute implements CommandExecutor {
 
     public List<String> getcommands(Player player, String name)
     {
-        ConfigurationSection commandlist = RandomCommand.plugin.getConfig().getConfigurationSection("CommandList");
+        ConfigurationSection commandlist = RandomCommand.config.getConfigurationSection("CommandList");
         return PlaceholderAPI.setPlaceholders(player, commandlist.getStringList(name));
     }
     public String ColorString(String string)
