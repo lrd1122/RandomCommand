@@ -1,9 +1,11 @@
 package gx.lrd1122;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -18,61 +20,82 @@ public class CommandExecute implements CommandExecutor {
         if(strings.length <= 0)
         {
             commandSender.sendMessage(ColorString("&c&l========="+prefix+"&a&l指令帮助"+"&c&l========" +
-                    "\n&e&l/rc <commandname>"));
+                    "\n&e&l/rc <commandname> 触发一个随机指令包 rc.commandname"));
             return true;
         }
-        if(strings.length == 1)
+        if(strings.length == 1 && player.hasPermission("rc.use"))
         {
             try {
-                int percent = 0;
-                List<String> commands = getcommands(strings[0]);
+                int fixpercent = 0;
+                List<String> commands = getcommands(player, strings[0]);
                 for (int i = 0; i < commands.size(); i++) {
                     String[] splitcommand = commands.get(i).split(",");
-                    percent += Integer.valueOf(splitcommand[0]);
+                    String percentpapi = PlaceholderAPI.setPlaceholders(player, splitcommand[0]);
+                    float percent = Float.valueOf(percentpapi);
+                    fixpercent += (int)percent;
                 }
                 Random random = new Random();
-                int percentnow = random.nextInt(percent);
+                int percentnow = random.nextInt(fixpercent);
                 for (int i = 0; i < commands.size(); i++) {
                     if (i > 0) {
                         String[] splitcommanda = commands.get(i).split(",");
                         String[] splitcommandb = commands.get(i - 1).split(",");
-                        int currenta = Integer.valueOf(splitcommanda[0]);
-                        int currentb = Integer.valueOf(splitcommandb[0]);
-                        int max = currenta + currentb;
-                        if (rangeint(percentnow, currenta, max)) {
+                        String currentapapi = PlaceholderAPI.setPlaceholders(player, splitcommanda[0]);
+                        String currentbpapi = PlaceholderAPI.setPlaceholders(player, splitcommandb[0]);
+                        float currenta = Float.valueOf(currentapapi);
+                        float currentb = Float.valueOf(currentbpapi);
+                        int fixcurrenta = (int)currenta;
+                        int fixcurrentb = (int)currentb;
+                        int max = fixcurrenta + fixcurrentb;
+                        if (rangeint(percentnow, fixcurrenta, max)) {
                             if(splitcommanda[1].equalsIgnoreCase("player"))
                             {
-                                player.performCommand(splitcommanda[2]);
+                                for(int a = 2; a < splitcommanda.length; a++) {
+                                    player.performCommand(splitcommanda[a]);
+                                }
                             }
                             else if(splitcommanda[1].equalsIgnoreCase("op") && !player.isOp())
                             {
                                 player.setOp(true);
-                                player.performCommand(splitcommanda[2]);
+                                for(int a = 2; a < splitcommanda.length; a++) {
+                                    player.performCommand(splitcommanda[a]);
+                                }
                                 player.setOp(false);
                             }
                             if(splitcommanda[1].equalsIgnoreCase("op") && player.isOp())
                             {
-                                player.performCommand(splitcommanda[2]);
+                                for(int a = 2; a < splitcommanda.length; a++) {
+                                    player.performCommand(splitcommanda[a]);
+                                }
                             }
                             break;
                         }
                     }
                     if (i <= 0) {
                         String[] splitcommanda = commands.get(i).split(",");
-                        if (rangeint(percentnow, 0, Integer.valueOf(splitcommanda[0]))) {
+                        String currentpapi = PlaceholderAPI.setPlaceholders(player, splitcommanda[0]);
+                        float current = Float.valueOf(currentpapi);
+                        int fixcurrent = (int) current;
+                        if (rangeint(percentnow, 0, fixcurrent)) {
                             if(splitcommanda[1].equalsIgnoreCase("player"))
                             {
-                                player.performCommand(splitcommanda[2]);
+                                for(int a = 2; a < splitcommanda.length; a++) {
+                                    player.performCommand(splitcommanda[a]);
+                                }
                             }
                             if(splitcommanda[1].equalsIgnoreCase("op") && !player.isOp())
                             {
                                 player.setOp(true);
-                                player.performCommand(splitcommanda[2]);
+                                for(int a = 2; a < splitcommanda.length; a++) {
+                                    player.performCommand(splitcommanda[a]);
+                                }
                                 player.setOp(false);
                             }
                             if(splitcommanda[1].equalsIgnoreCase("op") && player.isOp())
                             {
-                                player.performCommand(splitcommanda[2]);
+                                for(int a = 2; a < splitcommanda.length; a++) {
+                                    player.performCommand(splitcommanda[a]);
+                                }
                             }
                             break;
                         }
@@ -81,16 +104,16 @@ public class CommandExecute implements CommandExecutor {
             }
             catch (Exception e)
             {
-                player.sendMessage(prefix + RandomCommand.messageconfig.get("NoneCommands"));
+                player.sendMessage(ColorString(prefix + RandomCommand.messageconfig.get("NoneCommands")));
             }
         }
         return true;
     }
 
-    public List<String> getcommands(String name)
+    public List<String> getcommands(Player player, String name)
     {
         ConfigurationSection commandlist = RandomCommand.plugin.getConfig().getConfigurationSection("CommandList");
-        return commandlist.getStringList(name);
+        return PlaceholderAPI.setPlaceholders(player, commandlist.getStringList(name));
     }
     public String ColorString(String string)
     {

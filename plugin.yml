@@ -2,6 +2,7 @@ name: RandomCommand
 author: lrd1122
 version: 1.0
 main: gx.lrd1122.RandomCommand
+softdepend: [PlaceholderAPI]
 commands:
   randomcommand:
     description: randomcommand

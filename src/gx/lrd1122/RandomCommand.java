@@ -2,8 +2,8 @@ package gx.lrd1122;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -18,6 +18,7 @@ public class RandomCommand extends JavaPlugin {
         getLogger().info("[RandomCommand] 插件已成功加载,Bug反馈+QQ1794325461");
         saveDefaultConfig();
         File messagefile = new File(getDataFolder(), "message.yml");
+        Plugin placeholderapi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI");
         if(messagefile.exists()) {
             getLogger().info("[RandomCommand] message.yml文件已成功加载");
         }
