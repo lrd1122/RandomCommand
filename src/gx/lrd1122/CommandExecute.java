@@ -7,8 +7,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.List;
 import java.util.Random;
 
@@ -105,6 +107,17 @@ public class CommandExecute implements CommandExecutor {
             catch (Exception e)
             {
                 player.sendMessage(ColorString(prefix + RandomCommand.messageconfig.get("NoneCommands")));
+            }
+        }
+        if(strings.length== 1 && strings[0].equalsIgnoreCase("reload") && player.hasPermission("rc.reload"))
+        {
+            try{
+                RandomCommand.plugin.reloadConfig();
+                File messagefile = new File(RandomCommand.plugin.getDataFolder(), "message.yml");
+                RandomCommand.messageconfig = YamlConfiguration.loadConfiguration(messagefile);
+            }
+            catch (Exception e) {
+                player.sendMessage(ColorString(prefix +  RandomCommand.messageconfig.get("ReloadError")));
             }
         }
         return true;

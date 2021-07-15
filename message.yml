@@ -1,2 +1,3 @@
 Prefix: "&a[随机指令]"
 NoneCommands: "&c未检测到配置文件中的随机指令列表"
+ReloadError: "&c插件重载时遇到错误"
