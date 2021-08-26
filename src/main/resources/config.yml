@@ -1,0 +1,9 @@
+CommandList:
+  #随机指令列表
+  example1:
+    #请使用 ; 分割
+    #格式: 概率;对象:执行指令;对象:执行指令...可以一直加
+    - '%server_online%*5;player:tellraw @a "我爱你";console:tellraw @a "你是个好人"'
+    - '20;player:tellraw @a "啊这"'
+    - '10;player:tellraw @a "这啊"'
+    #概率计算方式: 单个指令概率/概率之和

@@ -1,0 +1,10 @@
+name: RandomCommand
+version: 1.4-SNAPSHOT
+main: gx.lrd1122.RandomCommand
+softdepend: [ PlaceholderAPI ]
+authors: [ lrd1122 ]
+commands:
+  randomcommand:
+    description: rc
+    aliases: rc
+    usage: /rc
